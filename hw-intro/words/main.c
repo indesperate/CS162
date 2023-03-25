@@ -22,6 +22,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include <assert.h>
+#include <bits/getopt_core.h>
 #include <getopt.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -182,22 +183,25 @@ int main (int argc, char *argv[]) {
   if ((argc - optind) < 1) {
     // No input file specified, instead, read from STDIN instead.
     infile = stdin;
-    total_words += num_words(infile);
-  } else {
-    for (int i = argc - optind + 1; i < argc; i++) {
-      infile = fopen(argv[i], "r");
-      if (infile == NULL) {
-        fprintf(stderr, "Specified file %s does not exist.\n", argv[i]);
-        return 1;
-      }
+    if (count_mode) {
       total_words += num_words(infile);
-      fclose(infile);
+    } else {
+      count_words(&word_counts, infile);
+    }
+    rewind(infile);
+  } else {
+    for (i = optind; i < argc; i++) {
       infile = fopen(argv[i], "r");
       if (infile == NULL) {
         fprintf(stderr, "Specified file %s does not exist.\n", argv[i]);
         return 1;
       }
-      count_words(&word_counts, infile);
+      if (count_mode) {
+        total_words += num_words(infile);
+      } else {
+        count_words(&word_counts, infile);
+      }
+      fclose(infile);
     }
   }
 
