@@ -88,7 +88,7 @@ int add_word(WordCount **wclist, char *word) {
   {
     word_find->count++;
   } else {
-    WordCount *first = calloc(sizeof(WordCount), 1);
+    WordCount *first = calloc(1, sizeof(WordCount));
     if (!first) {
       return 1;
     }
