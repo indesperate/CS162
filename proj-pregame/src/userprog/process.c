@@ -473,7 +473,10 @@ static bool setup_stack(void** esp) {
   if (kpage != NULL) {
     success = install_page(((uint8_t*)PHYS_BASE) - PGSIZE, kpage, true);
     if (success)
-      *esp = PHYS_BASE;
+/* PHYS_BASE is the maximum virtual address, but the argc and argv also need some space, 
+ * considering the eip and alignment, the offset should be 16 for 2 variables + 4 for eip
+ */
+      *esp = PHYS_BASE - 20;
     else
       palloc_free_page(kpage);
   }
